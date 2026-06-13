@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Full Stack Fundamentals v3 — Knowledge Base</title>
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #1a1d27;
+    --surface2: #22263a;
+    --border: rgba(255,255,255,0.08);
+    --text: #e8eaf0;
+    --muted: #8b90a8;
+    --accent: #6c8aff;
+    --accent2: #4ecdc4;
+    --accent3: #f7c59f;
+    --success: #56cf8a;
+    --warning: #f7c59f;
+    --danger: #ff6b7a;
+    --code-bg: #13151f;
+    --radius: 10px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.7; }
+
+  /* Layout */
+  .layout { display: flex; min-height: 100vh; }
+  .sidebar { width: 260px; background: var(--surface); border-right: 1px solid var(--border); padding: 2rem 1.25rem; position: sticky; top: 0; height: 100vh; overflow-y: auto; flex-shrink: 0; }
+  .main { flex: 1; padding: 2.5rem 3rem; max-width: 900px; }
+
+  /* Sidebar */
+  .sidebar-logo { display: flex; align-items: center; gap: 10px; margin-bottom: 2rem; }
+  .sidebar-logo .dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); }
+  .sidebar-logo span { font-size: 13px; font-weight: 600; color: var(--text); }
+  .sidebar-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--muted); margin: 1.5rem 0 0.5rem; }
+  .nav-link { display: flex; align-items: center; gap: 8px; padding: 6px 10px; border-radius: 6px; color: var(--muted); font-size: 13px; text-decoration: none; transition: all 0.15s; cursor: pointer; border: none; background: none; width: 100%; text-align: left; }
+  .nav-link:hover, .nav-link.active { background: rgba(108,138,255,0.12); color: var(--accent); }
+  .nav-link .icon { font-size: 14px; flex-shrink: 0; }
+
+  /* Header */
+  .page-header { margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+  .badge-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 1rem; }
+  .badge { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+  .badge.blue { background: rgba(108,138,255,0.15); color: var(--accent); }
+  .badge.teal { background: rgba(78,205,196,0.15); color: var(--accent2); }
+  .badge.amber { background: rgba(247,197,159,0.15); color: var(--accent3); }
+  h1 { font-size: 28px; font-weight: 700; color: var(--text); margin-bottom: 8px; }
+  .subtitle { color: var(--muted); font-size: 14px; }
+
+  /* Stack diagram */
+  .stack-diagram { display: flex; gap: 4px; margin: 1.5rem 0; align-items: stretch; }
+  .stack-box { flex: 1; padding: 12px 10px; border-radius: 8px; text-align: center; font-size: 12px; font-weight: 600; }
+  .stack-box .label { font-size: 11px; opacity: 0.7; margin-bottom: 4px; font-weight: 400; }
+  .stack-box.ui { background: rgba(108,138,255,0.15); border: 1px solid rgba(108,138,255,0.3); color: var(--accent); }
+  .stack-box.sv { background: rgba(78,205,196,0.15); border: 1px solid rgba(78,205,196,0.3); color: var(--accent2); }
+  .stack-box.db { background: rgba(247,197,159,0.15); border: 1px solid rgba(247,197,159,0.3); color: var(--accent3); }
+  .arrow { display: flex; align-items: center; color: var(--muted); font-size: 18px; padding: 0 2px; }
+
+  /* Sections */
+  .section { display: none; }
+  .section.active { display: block; }
+  .section-title { font-size: 20px; font-weight: 600; color: var(--text); margin-bottom: 1.5rem; display: flex; align-items: center; gap: 10px; }
+  .section-title .icon { font-size: 20px; }
+  .sub-title { font-size: 15px; font-weight: 600; color: var(--text); margin: 1.5rem 0 0.75rem; padding-bottom: 6px; border-bottom: 1px solid var(--border); }
+
+  /* Cards */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; margin-bottom: 1rem; }
+  .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; margin-bottom: 1.5rem; }
+  .concept-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1rem; cursor: pointer; transition: border-color 0.15s; }
+  .concept-card:hover { border-color: var(--accent); }
+  .concept-card .ci { font-size: 20px; margin-bottom: 8px; }
+  .concept-card h3 { font-size: 13px; font-weight: 600; margin-bottom: 4px; }
+  .concept-card p { font-size: 12px; color: var(--muted); line-height: 1.4; }
+
+  /* Tables */
+  table { width: 100%; border-collapse: collapse; font-size: 13px; margin-bottom: 1rem; }
+  th { text-align: left; padding: 8px 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); border-bottom: 1px solid var(--border); }
+  td { padding: 8px 12px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: top; line-height: 1.5; }
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+  td:first-child { font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; color: var(--accent); white-space: nowrap; }
+  td.plain:first-child { font-family: inherit; font-size: 13px; color: var(--text); white-space: normal; }
+
+  /* Code */
+  code { font-family: 'Consolas', 'Courier New', monospace; font-size: 12px; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; color: var(--accent2); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.25rem; font-family: 'Consolas', 'Courier New', monospace; font-size: 13px; color: var(--accent2); overflow-x: auto; margin-bottom: 1rem; line-height: 1.6; }
+  pre .comment { color: var(--muted); }
+
+  /* Callouts */
+  .callout { border-radius: 8px; padding: 10px 14px; margin: 10px 0; font-size: 13px; line-height: 1.6; display: flex; gap: 10px; align-items: flex-start; }
+  .callout .ci { flex-shrink: 0; font-size: 15px; margin-top: 1px; }
+  .callout.info { background: rgba(108,138,255,0.1); border-left: 3px solid var(--accent); }
+  .callout.warn { background: rgba(247,197,159,0.1); border-left: 3px solid var(--accent3); }
+  .callout.tip { background: rgba(86,207,138,0.1); border-left: 3px solid var(--success); }
+
+  /* Tags */
+  .tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+  .tag { font-size: 11px; font-weight: 600; padding: 3px 10px; border-radius: 999px; }
+  .tag.blue { background: rgba(108,138,255,0.15); color: var(--accent); }
+  .tag.teal { background: rgba(78,205,196,0.15); color: var(--accent2); }
+  .tag.amber { background: rgba(247,197,159,0.15); color: var(--accent3); }
+  .tag.green { background: rgba(86,207,138,0.15); color: var(--success); }
+
+  /* VIM modes */
+  .vim-modes { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin: 1rem 0; }
+  .vim-mode { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+  .vim-mode .key { font-family: monospace; font-size: 20px; font-weight: 700; color: var(--accent); display: block; margin-bottom: 4px; }
+  .vim-mode .name { font-size: 12px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .vim-mode .desc { font-size: 11px; color: var(--muted); }
+
+  /* Flashcards */
+  .fc-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem; }
+  .fc-score { display: flex; gap: 12px; }
+  .score-pill { font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 999px; }
+  .score-pill.correct { background: rgba(86,207,138,0.15); color: var(--success); }
+  .score-pill.wrong { background: rgba(255,107,122,0.15); color: var(--danger); }
+  .progress-bar { height: 4px; background: var(--border); border-radius: 2px; margin-bottom: 1.5rem; }
+  .progress-fill { height: 100%; border-radius: 2px; background: var(--accent); transition: width 0.3s; }
+  .fc-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 1.75rem; min-height: 160px; cursor: pointer; transition: border-color 0.15s; }
+  .fc-card:hover { border-color: rgba(108,138,255,0.4); }
+  .fc-q { font-size: 16px; color: var(--text); line-height: 1.5; margin-bottom: 0; }
+  .fc-a { font-size: 14px; color: var(--muted); line-height: 1.6; display: none; margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--border); }
+  .fc-a.show { display: block; }
+  .fc-hint { font-size: 12px; color: var(--muted); margin-top: 1rem; opacity: 0.6; }
+  .fc-btns { display: flex; gap: 8px; margin-top: 1rem; }
+  .fc-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid var(--border); font-size: 13px; font-weight: 500; cursor: pointer; background: transparent; transition: all 0.15s; }
+  .fc-btn.got { color: var(--success); border-color: rgba(86,207,138,0.3); }
+  .fc-btn.got:hover { background: rgba(86,207,138,0.1); }
+  .fc-btn.miss { color: var(--danger); border-color: rgba(255,107,122,0.3); }
+  .fc-btn.miss:hover { background: rgba(255,107,122,0.1); }
+  .fc-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 1rem; }
+  .fc-nav button { background: transparent; border: 1px solid var(--border); border-radius: 6px; padding: 5px 14px; color: var(--muted); font-size: 13px; cursor: pointer; }
+  .fc-nav button:hover { border-color: var(--accent); color: var(--accent); }
+  .fc-counter { font-size: 12px; color: var(--muted); }
+
+  /* Quick ref */
+  .qr-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  @media (max-width: 700px) { .qr-grid { grid-template-columns: 1fr; } .sidebar { display: none; } .main { padding: 1.5rem; } .vim-modes { grid-template-columns: 1fr; } .stack-diagram { flex-direction: column; } .arrow { transform: rotate(90deg); } }
+</style>
+</head>
+<body>
+<div class="layout">
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <div class="dot"></div>
+      <span>Full Stack v3</span>
+    </div>
+    <div class="sidebar-label">Sections</div>
+    <button class="nav-link active" onclick="show('overview', this)"><span class="icon">🗺️</span> Overview</button>
+    <button class="nav-link" onclick="show('linux', this)"><span class="icon">💻</span> Linux & CLI</button>
+    <button class="nav-link" onclick="show('networking', this)"><span class="icon">🌐</span> Networking</button>
+    <button class="nav-link" onclick="show('servers', this)"><span class="icon">⚙️</span> Servers & Nginx</button>
+    <button class="nav-link" onclick="show('security', this)"><span class="icon">🔒</span> Security</button>
+    <button class="nav-link" onclick="show('cicd', this)"><span class="icon">🔄</span> CI/CD & Logs</button>
+    <button class="nav-link" onclick="show('databases', this)"><span class="icon">🗄️</span> Databases</button>
+    <button class="nav-link" onclick="show('architecture', this)"><span class="icon">🏗️</span> Architecture</button>
+    <div class="sidebar-label">Practice</div>
+    <button class="nav-link" onclick="show('flashcards', this)"><span class="icon">🃏</span> Flashcards</button>
+    <button class="nav-link" onclick="show('quickref', this)"><span class="icon">⚡</span> Quick Reference</button>
+  </nav>
+
+  <!-- Main -->
+  <main class="main">
+
+    <!-- OVERVIEW -->
+    <div class="section active" id="s-overview">
+      <div class="page-header">
+        <div class="badge-row">
+          <span class="badge blue">Frontend Masters</span>
+          <span class="badge teal">Jem Young · Netflix</span>
+          <span class="badge amber">Full Stack v3</span>
+        </div>
+        <h1>Full Stack Fundamentals</h1>
+        <p class="subtitle">The Linux fundamentals, networking, server config, and deployment patterns that underpin every web application.</p>
+      </div>
+
+      <div class="stack-diagram">
+        <div class="stack-box ui"><div class="label">Frontend</div>React / Vue / Angular</div>
+        <div class="arrow">→</div>
+        <div class="stack-box sv"><div class="label">Server</div>Nginx / Node.js</div>
+        <div class="arrow">→</div>
+        <div class="stack-box db"><div class="label">Database</div>PostgreSQL / Redis</div>
+      </div>
+
+      <p class="sub-title">Core Concepts</p>
+      <div class="card-grid">
+        <div class="concept-card" onclick="show('linux', document.querySelector('[onclick*=linux]'))">
+          <div class="ci">💻</div><h3>Linux & CLI</h3><p>Terminal commands, VIM, file system, user management</p>
+        </div>
+        <div class="concept-card" onclick="show('networking', document.querySelector('[onclick*=networking]'))">
+          <div class="ci">🌐</div><h3>Networking</h3><p>TCP/IP, DNS, URLs, protocols, SSH</p>
+        </div>
+        <div class="concept-card" onclick="show('servers', document.querySelector('[onclick*=servers]'))">
+          <div class="ci">⚙️</div><h3>Servers & Nginx</h3><p>Reverse proxy, Node.js setup, server maintenance</p>
+        </div>
+        <div class="concept-card" onclick="show('security', document.querySelector('[onclick*=security]'))">
+          <div class="ci">🔒</div><h3>Security</h3><p>File permissions, firewall, SSH hardening</p>
+        </div>
+        <div class="concept-card" onclick="show('cicd', document.querySelector('[onclick*=cicd]'))">
+          <div class="ci">🔄</div><h3>CI/CD & Logs</h3><p>CI vs CD vs CDeploy, log files, streams</p>
+        </div>
+        <div class="concept-card" onclick="show('architecture', document.querySelector('[onclick*=architecture]'))">
+          <div class="ci">🏗️</div><h3>Architecture</h3><p>Containers, microservices, load balancers</p>
+        </div>
+      </div>
+
+      <p class="sub-title">Key Takeaways</p>
+      <div class="card">
+        <table>
+          <tr><td class="plain">A full stack engineer builds and manages all three layers: UI, server, and database</td></tr>
+          <tr><td class="plain">The terminal is the fastest path to the OS — every server task in production lives here</td></tr>
+          <tr><td class="plain">Nginx acts as a reverse proxy — routes all HTTP traffic to the right process</td></tr>
+          <tr><td class="plain">Security is layered: SSH keys → disable root → firewall → auto-updates</td></tr>
+          <tr><td class="plain">CI validates, Continuous Delivery prepares, Continuous Deployment ships automatically</td></tr>
+          <tr><td class="plain">Containers solve "works on my machine" by bundling the app and its environment</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- LINUX -->
+    <div class="section" id="s-linux">
+      <div class="section-title"><span class="icon">💻</span> Linux & The Terminal</div>
+      <div class="callout info"><span class="ci">💡</span><div>The terminal is the lowest-level, fastest way to communicate with the OS. <strong>OS Layers:</strong> User → Shell → Kernel → Hardware</div></div>
+
+      <p class="sub-title">File System Commands</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>ls</td><td>List contents of current directory</td></tr>
+        <tr><td>cd &lt;dir&gt;</td><td>Change into a directory</td></tr>
+        <tr><td>cd ..</td><td>Move up one directory level</td></tr>
+        <tr><td>cd ~</td><td>Jump to home directory</td></tr>
+        <tr><td>pwd</td><td>Print current working directory</td></tr>
+        <tr><td>mkdir &lt;name&gt;</td><td>Create a new directory</td></tr>
+        <tr><td>rmdir &lt;name&gt;</td><td>Remove an empty directory</td></tr>
+        <tr><td>touch &lt;file&gt;</td><td>Create an empty file</td></tr>
+        <tr><td>rm &lt;file&gt;</td><td>Delete a file</td></tr>
+        <tr><td>cat &lt;file&gt;</td><td>Print full file contents</td></tr>
+        <tr><td>less &lt;file&gt;</td><td>View file one page at a time</td></tr>
+        <tr><td>man &lt;cmd&gt;</td><td>Open the manual for any command</td></tr>
+        <tr><td>echo &lt;text&gt;</td><td>Print text to terminal</td></tr>
+        <tr><td>clear</td><td>Clear terminal output</td></tr>
+        <tr><td>Ctrl + C</td><td>Force-exit a running program</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">VIM — The Server Text Editor</p>
+      <div class="vim-modes">
+        <div class="vim-mode"><span class="key">Esc</span><div class="name">Normal</div><div class="desc">Default / navigation — always start here</div></div>
+        <div class="vim-mode"><span class="key">i</span><div class="name">Insert</div><div class="desc">Type and edit text</div></div>
+        <div class="vim-mode"><span class="key">:</span><div class="name">Command</div><div class="desc">Save, quit, search</div></div>
+      </div>
+      <table><thead><tr><th>Command mode</th><th>Action</th></tr></thead><tbody>
+        <tr><td>:w</td><td>Save</td></tr>
+        <tr><td>:q</td><td>Quit</td></tr>
+        <tr><td>:wq</td><td>Save and quit</td></tr>
+        <tr><td>:q!</td><td>Force quit without saving</td></tr>
+        <tr><td>:w !sudo tee %</td><td>Save a read-only file using sudo</td></tr>
+      </tbody></table>
+      <div class="callout warn"><span class="ci">⚠️</span><div>Common trap: Press <code>Esc</code> first before typing <code>:q</code> — you must be in Normal mode.</div></div>
+
+      <p class="sub-title">User Management</p>
+      <div class="callout warn"><span class="ci">⚠️</span><div>Root has unlimited permissions with no confirmation. <strong>Never run production as root.</strong></div></div>
+      <table><thead><tr><th>Step</th><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>1</td><td>adduser &lt;username&gt;</td><td>Create a new user</td></tr>
+        <tr><td>2</td><td>usermod -aG sudo &lt;username&gt;</td><td>Add user to sudo group</td></tr>
+        <tr><td>3</td><td>su &lt;username&gt;</td><td>Switch to that user</td></tr>
+        <tr><td>4</td><td>sudo -i</td><td>Switch to root (use sparingly)</td></tr>
+        <tr><td>5</td><td>sudo cat /var/log/auth.log</td><td>Check auth/login history</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Find & Search</p>
+      <table><thead><tr><th>Command</th><th>Searches</th><th>Example</th></tr></thead><tbody>
+        <tr><td>find</td><td>File <strong>names</strong></td><td>find /bar -name foo.txt</td></tr>
+        <tr><td>grep</td><td>File <strong>contents</strong></td><td>grep -i 'term' /var/www</td></tr>
+      </tbody></table>
+      <div class="callout tip"><span class="ci">💡</span><div>Memory hook: <strong>find</strong> = names, <strong>grep</strong> = contents</div></div>
+    </div>
+
+    <!-- NETWORKING -->
+    <div class="section" id="s-networking">
+      <div class="section-title"><span class="icon">🌐</span> Networking</div>
+
+      <p class="sub-title">Protocols</p>
+      <table><thead><tr><th>Protocol</th><th>Full Name</th><th>Use Case</th></tr></thead><tbody>
+        <tr><td>TCP</td><td>Transmission Control Protocol</td><td>Reliable, ordered delivery — web, email</td></tr>
+        <tr><td>UDP</td><td>User Datagram Protocol</td><td>Fast, one-way — video/audio streaming</td></tr>
+        <tr><td>ICMP</td><td>Internet Control Message Protocol</td><td>Diagnostics — ping, traceroute</td></tr>
+      </tbody></table>
+      <div class="callout tip"><span class="ci">💡</span><div>Analogy: TCP = certified mail (you get a receipt). UDP = shouting across a room — fast, no guarantee they heard you.</div></div>
+
+      <p class="sub-title">DNS — Domain Name System</p>
+      <table><thead><tr><th>Concept</th><th>What it is</th></tr></thead><tbody>
+        <tr><td>Nameserver</td><td>A server that holds DNS records for a domain</td></tr>
+        <tr><td>A Record</td><td>Maps domain name → IP address</td></tr>
+        <tr><td>CNAME</td><td>Maps domain name → another domain name (alias)</td></tr>
+        <tr><td>nslookup &lt;domain&gt;</td><td>CLI tool to look up the IP for any domain</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Anatomy of a URL</p>
+      <pre>blog.yourdomain.com/en/fullstack?test=true</pre>
+      <table><thead><tr><th>Part</th><th>Example</th><th>What it is</th></tr></thead><tbody>
+        <tr><td>Domain</td><td>yourdomain.com</td><td>The base address you register</td></tr>
+        <tr><td>Subdomain</td><td>blog.yourdomain.com</td><td>Prefix — can point to different server</td></tr>
+        <tr><td>TLD</td><td>.com</td><td>Top-level domain</td></tr>
+        <tr><td>Path</td><td>/en/fullstack</td><td>The specific resource on the server</td></tr>
+        <tr><td>Query param</td><td>?test=true</td><td>Optional key-value data</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">SSH — Secure Shell</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>ssh -i ~/.ssh/&lt;key&gt; user@ip</td><td>Connect to server using a private key</td></tr>
+        <tr><td>ssh-add --apple-use-keychain &lt;key&gt;</td><td>Add key to macOS keychain</td></tr>
+        <tr><td>ssh -vT git@github.com</td><td>Test SSH connection to GitHub</td></tr>
+      </tbody></table>
+    </div>
+
+    <!-- SERVERS -->
+    <div class="section" id="s-servers">
+      <div class="section-title"><span class="icon">⚙️</span> Servers & Nginx</div>
+      <div class="callout info"><span class="ci">💡</span><div>A server is simply a program that <strong>serves requests</strong>. Request flow: Browser → Nginx (80/443) → Node.js (3000) → Database</div></div>
+
+      <p class="sub-title">Nginx — The Reverse Proxy</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>sudo apt install nginx</td><td>Install Nginx</td></tr>
+        <tr><td>sudo service nginx start</td><td>Start the Nginx service</td></tr>
+        <tr><td>less /etc/nginx/sites-available/default</td><td>View default config</td></tr>
+        <tr><td>/etc/nginx/sites-enabled/&lt;config&gt;</td><td>Your custom proxy config lives here</td></tr>
+      </tbody></table>
+      <div class="callout tip"><span class="ci">💡</span><div>Nginx receives all traffic on port 80/443, then forwards internally to your app. Your app port is <strong>never</strong> directly exposed to the internet.</div></div>
+
+      <p class="sub-title">Installing Node.js</p>
+      <pre><span class="comment"># 1. Add NodeSource</span>
+curl https://deb.nodesource.com/setup_19.x | sudo -E bash -
+
+<span class="comment"># 2. Install Node</span>
+sudo apt-get install nodejs
+
+<span class="comment"># 3. Install Git</span>
+sudo apt install git
+
+<span class="comment"># 4. Own the web directory</span>
+sudo chown -R $USER:$USER /var/www</pre>
+
+      <p class="sub-title">Server Maintenance</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>apt update && apt upgrade</td><td>Update all packages</td></tr>
+        <tr><td>shutdown now -r</td><td>Restart the server</td></tr>
+        <tr><td>sudo apt install unattended-upgrades</td><td>Install auto-update tool</td></tr>
+        <tr><td>sudo dpkg-reconfigure --priority=low unattended-upgrades</td><td>Enable auto-updates</td></tr>
+      </tbody></table>
+    </div>
+
+    <!-- SECURITY -->
+    <div class="section" id="s-security">
+      <div class="section-title"><span class="icon">🔒</span> Security</div>
+
+      <p class="sub-title">Defense in Depth</p>
+      <div class="card">
+        <table>
+          <tr><td>1</td><td class="plain"><strong>SSH key auth</strong> — Key pairs instead of passwords. Passwords can be brute-forced; private keys cannot</td></tr>
+          <tr><td>2</td><td class="plain"><strong>Disable root login</strong> — Attackers always try root first. Remove that attack surface</td></tr>
+          <tr><td>3</td><td class="plain"><strong>Firewall (UFW)</strong> — Block all ports except what you explicitly need</td></tr>
+          <tr><td>4</td><td class="plain"><strong>Auto-updates</strong> — Most breaches exploit known, already-patched vulnerabilities</td></tr>
+        </table>
+      </div>
+
+      <p class="sub-title">File Permissions</p>
+      <div class="callout info"><span class="ci">💡</span><div><code>chmod</code> format: <code>[owner][group][others]</code> where 4=read, 2=write, 1=execute. So 644 = owner rw (6), group r (4), others r (4).</div></div>
+      <pre>chmod 644 ~/.ssh/authorized_keys   <span class="comment"># correct for SSH keys</span>
+stat -c %a &lt;file&gt;                  <span class="comment"># view numeric permissions</span></pre>
+
+      <p class="sub-title">UFW — Uncomplicated Firewall</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>sudo ufw status</td><td>Show current firewall rules</td></tr>
+        <tr><td>sudo ufw allow &lt;port&gt;</td><td>Open a port</td></tr>
+        <tr><td>sudo ufw deny &lt;port&gt;</td><td>Block a port</td></tr>
+        <tr><td>sudo ufw enable</td><td>Activate the firewall</td></tr>
+        <tr><td>nmap &lt;IP&gt;</td><td>Scan open ports on a server</td></tr>
+        <tr><td>less /etc/services</td><td>List all well-known port numbers</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">SSH Hardening Steps</p>
+      <pre><span class="comment"># 1. Set correct key permissions</span>
+chmod 644 ~/.ssh/authorized_keys
+
+<span class="comment"># 2. Disable root login</span>
+sudo vi /etc/ssh/sshd_config
+<span class="comment"># Set: PermitRootLogin no</span>
+
+<span class="comment"># 3. Restart SSH daemon to apply changes</span>
+sudo service ssh restart</pre>
+      <div class="callout warn"><span class="ci">⚠️</span><div>Before disabling root login, verify your non-root sudo user can SSH in — or you'll lock yourself out permanently.</div></div>
+    </div>
+
+    <!-- CI/CD -->
+    <div class="section" id="s-cicd">
+      <div class="section-title"><span class="icon">🔄</span> CI/CD & Logs</div>
+
+      <p class="sub-title">The Three CI/CD Stages</p>
+      <table><thead><tr><th>Term</th><th>Stands for</th><th>What happens</th></tr></thead><tbody>
+        <tr><td>CI</td><td>Continuous Integration</td><td>Every code change is auto-tested and merged to main</td></tr>
+        <tr><td>CD (Delivery)</td><td>Continuous Delivery</td><td>Code is auto-built and packaged — but deploy is manual</td></tr>
+        <tr><td>CD (Deployment)</td><td>Continuous Deployment</td><td>Builds are auto-deployed to production without human approval</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Important Log Files</p>
+      <table><thead><tr><th>Log file</th><th>Contains</th></tr></thead><tbody>
+        <tr><td>/var/log/syslog</td><td>General system activity</td></tr>
+        <tr><td>/var/log/auth.log</td><td>Login attempts and auth events</td></tr>
+        <tr><td>/var/log/nginx/access.log</td><td>Every HTTP request that hit Nginx</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Log Viewing Commands</p>
+      <table><thead><tr><th>Command</th><th>What it does</th></tr></thead><tbody>
+        <tr><td>tail &lt;file&gt;</td><td>Show last 10 lines</td></tr>
+        <tr><td>tail -f &lt;file&gt;</td><td>Live-stream new lines as they appear ⭐</td></tr>
+        <tr><td>head &lt;file&gt;</td><td>Show first 10 lines</td></tr>
+        <tr><td>less &lt;file&gt;</td><td>Page through file contents</td></tr>
+        <tr><td>cat &lt;file&gt;</td><td>Dump entire file to terminal</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Standard Streams & Redirection</p>
+      <table><thead><tr><th>Operator</th><th>Direction</th><th>Example</th></tr></thead><tbody>
+        <tr><td>|</td><td>Pipe stdout into next command's stdin</td><td>cat file | grep error</td></tr>
+        <tr><td>&gt;</td><td>Write stdout to file (overwrites)</td><td>echo "hi" &gt; out.txt</td></tr>
+        <tr><td>&gt;&gt;</td><td>Append stdout to file</td><td>echo "more" &gt;&gt; out.txt</td></tr>
+        <tr><td>&lt;</td><td>Read from file as stdin</td><td>grep "foo" &lt; input.txt</td></tr>
+        <tr><td>2&gt;&amp;1</td><td>Redirect stderr to stdout</td><td>cmd &gt; all.log 2&gt;&amp;1</td></tr>
+      </tbody></table>
+    </div>
+
+    <!-- DATABASES -->
+    <div class="section" id="s-databases">
+      <div class="section-title"><span class="icon">🗄️</span> Databases</div>
+
+      <p class="sub-title">Relational vs Non-Relational</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--success);margin-bottom:8px;">Relational (SQL)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:8px;">Structured tables, defined schemas, data linked via foreign keys. Best for complex queries and data integrity.</p>
+          <div class="tag-row"><span class="tag green">MySQL</span><span class="tag green">PostgreSQL</span><span class="tag green">SQLite</span></div>
+        </div>
+        <div class="card">
+          <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:8px;">Non-Relational (NoSQL)</div>
+          <p style="font-size:13px;color:var(--muted);margin-bottom:8px;">Flexible schema — documents, key-value, graphs. Best for high-speed reads/writes or unstructured data.</p>
+          <div class="tag-row"><span class="tag blue">Redis</span><span class="tag blue">MongoDB</span><span class="tag blue">Cassandra</span></div>
+        </div>
+      </div>
+      <div class="callout tip"><span class="ci">💡</span><div><strong>Redis</strong> = in-memory key-value store. All data in RAM → extremely fast. Used for caching, sessions, leaderboards.</div></div>
+    </div>
+
+    <!-- ARCHITECTURE -->
+    <div class="section" id="s-architecture">
+      <div class="section-title"><span class="icon">🏗️</span> Architecture</div>
+
+      <p class="sub-title">Monolith vs Microservices</p>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:6px;">Monolith</div><p style="font-size:13px;color:var(--muted);">All features tightly coupled, deployed as one unit. Simple to start; hard to scale specific parts independently.</p></div>
+        <div class="card"><div style="font-size:13px;font-weight:600;margin-bottom:6px;">Microservices</div><p style="font-size:13px;color:var(--muted);">Loosely connected services, each with one responsibility. Independently deployable — but more operational complexity.</p></div>
+      </div>
+
+      <p class="sub-title">Containers</p>
+      <div class="tag-row" style="margin-bottom:8px;"><span class="tag blue">Docker</span><span class="tag blue">Amazon ECS</span><span class="tag blue">Apache Mesos</span><span class="tag blue">CoreOS rkt</span></div>
+      <table><thead><tr><th>Benefit</th><th>Why it matters</th></tr></thead><tbody>
+        <tr><td>Lightweight</td><td>Shares the host OS kernel — much smaller than VMs</td></tr>
+        <tr><td>Portable</td><td>Runs anywhere Docker is installed</td></tr>
+        <tr><td>Fast startup</td><td>Seconds vs minutes for a VM</td></tr>
+        <tr><td>Decoupled</td><td>Separates app from infrastructure — solves "works on my machine"</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Orchestration</p>
+      <div class="tag-row"><span class="tag amber">Kubernetes (K8s)</span><span class="tag amber">Docker Swarm</span><span class="tag amber">Amazon EKS</span><span class="tag amber">AKS</span></div>
+
+      <p class="sub-title">Load Balancing Algorithms</p>
+      <table><thead><tr><th>Algorithm</th><th>How it works</th></tr></thead><tbody>
+        <tr><td>Round Robin</td><td>Each server gets a request in turn, cyclically</td></tr>
+        <tr><td>IP Hashing</td><td>Same client IP always goes to same server (good for sessions)</td></tr>
+        <tr><td>Least Connections</td><td>Route to server with fewest active connections</td></tr>
+        <tr><td>Least Load</td><td>Route to server under least CPU/memory pressure</td></tr>
+        <tr><td>Random Choice</td><td>Picks a server at random</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">HTTPS & HTTP/2</p>
+      <div class="card">
+        <table>
+          <tr><td>HTTPS</td><td class="plain">Encrypts traffic. Use <a href="https://certbot.eff.org" style="color:var(--accent)">Certbot</a> for a free SSL cert via Let's Encrypt.</td></tr>
+          <tr><td>HTTP/2</td><td class="plain">Multiple requests over one connection simultaneously — faster than HTTP/1.1</td></tr>
+          <tr><td>Gzip</td><td class="plain">HTML responses are compressed by default in Nginx</td></tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div class="section" id="s-flashcards">
+      <div class="section-title"><span class="icon">🃏</span> Flashcards</div>
+      <div class="fc-header">
+        <div class="fc-score">
+          <span class="score-pill correct">✓ <span id="fc-c">0</span> correct</span>
+          <span class="score-pill wrong">✗ <span id="fc-w">0</span> review</span>
+        </div>
+        <span class="fc-counter" id="fc-num">1 / 20</span>
+      </div>
+      <div class="progress-bar"><div class="progress-fill" id="fc-bar" style="width:0%"></div></div>
+      <div class="fc-card" id="fc-card" onclick="reveal()">
+        <div class="fc-q" id="fc-q"></div>
+        <div class="fc-a" id="fc-a"></div>
+        <div class="fc-hint" id="fc-hint">Click to reveal answer</div>
+      </div>
+      <div class="fc-btns" id="fc-btns" style="display:none">
+        <button class="fc-btn miss" onclick="mark(false)">✗ Needs Review</button>
+        <button class="fc-btn got" onclick="mark(true)">✓ Got It</button>
+      </div>
+      <div class="fc-nav">
+        <button onclick="prev()">← Prev</button>
+        <button onclick="next()">Next →</button>
+      </div>
+    </div>
+
+    <!-- QUICK REF -->
+    <div class="section" id="s-quickref">
+      <div class="section-title"><span class="icon">⚡</span> Quick Reference</div>
+
+      <p class="sub-title">Most-Used Commands</p>
+      <pre><span class="comment"># Navigation</span>
+ls / cd &lt;dir&gt; / pwd / cd ~ / cd ..
+
+<span class="comment"># File reading</span>
+cat &lt;file&gt;              <span class="comment"># full output</span>
+less &lt;file&gt;             <span class="comment"># paginated</span>
+tail -f &lt;file&gt;          <span class="comment"># live stream</span>
+grep -i 'term' /path    <span class="comment"># search contents</span>
+find /dir -name file    <span class="comment"># search names</span>
+
+<span class="comment"># Security</span>
+chmod 644 &lt;file&gt;
+sudo ufw allow 80 && sudo ufw enable
+nmap &lt;IP&gt;
+
+<span class="comment"># Networking</span>
+nslookup domain.com
+ssh -i ~/.ssh/key user@ip
+
+<span class="comment"># Processes & logs</span>
+htop
+pkill &lt;name&gt;
+tail -f /var/log/nginx/access.log</pre>
+
+      <p class="sub-title">Common Mistakes</p>
+      <table><thead><tr><th>❌ Mistake</th><th>✅ Fix</th></tr></thead><tbody>
+        <tr><td class="plain">Running production as root</td><td class="plain">Always use a sudo-enabled user</td></tr>
+        <tr><td class="plain">Disabling root before testing new user</td><td class="plain">SSH in as new user first to verify</td></tr>
+        <tr><td class="plain">Forgetting to restart SSH daemon</td><td class="plain"><code>sudo service ssh restart</code> after every config change</td></tr>
+        <tr><td class="plain">Confusing find and grep</td><td class="plain">find=file names, grep=file contents</td></tr>
+        <tr><td class="plain">Using > when you meant >></td><td class="plain">> overwrites, >> appends</td></tr>
+        <tr><td class="plain">Stuck in VIM</td><td class="plain">Esc → :wq → Enter</td></tr>
+      </tbody></table>
+
+      <p class="sub-title">Interview Questions</p>
+      <div class="card">
+        <table>
+          <tr><td class="plain">What's the difference between CI, Continuous Delivery, and Continuous Deployment?</td></tr>
+          <tr><td class="plain">What does Nginx do and why use it in front of Node.js?</td></tr>
+          <tr><td class="plain">TCP vs UDP — when would you choose each?</td></tr>
+          <tr><td class="plain">What is a reverse proxy?</td></tr>
+          <tr><td class="plain">Monolith vs microservices — trade-offs?</td></tr>
+          <tr><td class="plain">Difference between a container and a virtual machine?</td></tr>
+          <tr><td class="plain">What load balancing algorithm would you use for a stateful app?</td></tr>
+        </table>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+const cards = [
+  {q:"What does a full stack engineer do in one sentence?",a:"Builds and manages both the frontend (UI) and backend (server + database) of a web application."},
+  {q:"Name the three layers of the modern web stack.",a:"UI Layer (browser/app), Server Layer (APIs, routing, auth), Database Layer (data storage and retrieval)."},
+  {q:"What is the terminal and why does it matter for server work?",a:"Text interface directly to the OS shell. The primary (often only) way to control a production Linux server."},
+  {q:"What are VIM's three modes and how do you enter each?",a:"Normal (Esc) — navigation. Insert (i) — text editing. Command (:) — save, quit, search."},
+  {q:"What is the difference between TCP and UDP?",a:"TCP is reliable and ordered — confirms delivery (web). UDP is fast but unordered — no confirmation (streaming)."},
+  {q:"What is DNS and what does an A record do?",a:"DNS translates domain names to IP addresses. An A record maps a domain name to an IPv4 address."},
+  {q:"What is a CNAME record?",a:"A CNAME maps one domain name to another domain name (an alias). e.g. www.example.com → example.com."},
+  {q:"Break down this URL: blog.yourdomain.com/en/fullstack?test=true",a:"subdomain=blog | domain=yourdomain.com | TLD=.com | path=/en/fullstack | query param=test=true"},
+  {q:"What does Nginx do in a typical Node.js deployment?",a:"Nginx is a reverse proxy — receives all HTTP requests on port 80/443 and routes them to Node.js running internally (e.g. port 3000)."},
+  {q:"Why should you never run production applications as root?",a:"Root has unlimited permissions with no confirmation. Any exploit can compromise the entire system. Use sudo users instead."},
+  {q:"What does chmod 644 mean?",a:"Owner: read+write (6=4+2). Group: read (4). Others: read (4). Correct permissions for SSH authorized_keys."},
+  {q:"What are the three CI/CD stages? How are Continuous Delivery and Deployment different?",a:"CI: auto-test and merge. CD Delivery: auto-build, manual deploy. CD Deployment: auto-build AND auto-deploy to production."},
+  {q:"What command streams live log updates in real time?",a:"tail -f <logfile> — the -f flag 'follows' the file and prints new lines as they appear."},
+  {q:"What's the difference between > and >> in bash?",a:"> overwrites the file with new output. >> appends to the end without deleting existing content."},
+  {q:"What's the difference between find and grep?",a:"find searches by file name. grep searches file contents. find=names, grep=contents."},
+  {q:"What are the main advantages of containers?",a:"Lightweight, portable, fast startup, isolated from host, decouples app from infrastructure — solves 'works on my machine'."},
+  {q:"Difference between a monolith and microservices?",a:"Monolith: tightly coupled, deployed as one unit. Microservices: independently deployable services, each with one responsibility."},
+  {q:"Name three load balancing algorithms and explain Round Robin.",a:"Round Robin, IP Hashing, Least Connections. Round Robin sends request 1→A, 2→B, 3→C, then repeats cyclically."},
+  {q:"What UFW commands open port 80 and check firewall status?",a:"sudo ufw allow 80 (open port) and sudo ufw status (check current rules)."},
+  {q:"What are the three steps to harden SSH on a new server?",a:"1. chmod 644 ~/.ssh/authorized_keys  2. Edit sshd_config: PermitRootLogin no  3. sudo service ssh restart"},
+];
+
+let cur=0, correct=0, wrong=0, shown=false;
+
+function render() {
+  document.getElementById('fc-q').textContent = cards[cur].q;
+  document.getElementById('fc-a').textContent = cards[cur].a;
+  document.getElementById('fc-a').classList.remove('show');
+  document.getElementById('fc-hint').style.display = 'block';
+  document.getElementById('fc-btns').style.display = 'none';
+  document.getElementById('fc-num').textContent = (cur+1)+' / '+cards.length;
+  shown = false;
+  const done = correct+wrong;
+  document.getElementById('fc-bar').style.width = Math.round(done/cards.length*100)+'%';
+  document.getElementById('fc-c').textContent = correct;
+  document.getElementById('fc-w').textContent = wrong;
+}
+
+function reveal() {
+  if(shown) return;
+  shown = true;
+  document.getElementById('fc-a').classList.add('show');
+  document.getElementById('fc-hint').style.display = 'none';
+  document.getElementById('fc-btns').style.display = 'flex';
+}
+
+function mark(ok) { if(ok) correct++; else wrong++; next(); }
+function next() { cur=(cur+1)%cards.length; render(); }
+function prev() { cur=(cur-1+cards.length)%cards.length; render(); }
+
+function show(id, btn) {
+  document.querySelectorAll('.section').forEach(s=>s.classList.remove('active'));
+  document.querySelectorAll('.nav-link').forEach(b=>b.classList.remove('active'));
+  document.getElementById('s-'+id).classList.add('active');
+  if(btn) btn.classList.add('active');
+  if(id==='flashcards') render();
+  window.scrollTo(0,0);
+}
+
+render();
+</script>
+</body>
+</html>
