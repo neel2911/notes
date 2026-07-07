@@ -2,10 +2,11 @@ import { NavLink } from 'react-router-dom'
 import { Home, Search, Notebook } from 'lucide-react'
 import { cn } from '@/lib/utils'
 import { courses } from '@/data/courses'
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 
 const linkClasses = ({ isActive }: { isActive: boolean }) =>
   cn(
-    'flex min-h-11 items-center gap-2 rounded-md px-3 py-2 text-sm font-medium transition-colors',
+    'flex min-h-11 items-center gap-2 overflow-hidden rounded-md px-3 py-2 text-sm font-medium transition-colors',
     isActive
       ? 'bg-accent text-accent-foreground'
       : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground',
@@ -27,10 +28,17 @@ export function NavContent({ onNavigate }: { onNavigate?: () => void }) {
         Courses
       </p>
       {courses.map((course) => (
-        <NavLink key={course.slug} to={`/course/${course.slug}`} className={linkClasses}>
-          <Notebook className="size-4 shrink-0" />
-          <span className="truncate">{course.title}</span>
-        </NavLink>
+        <Tooltip key={course.slug}>
+          <TooltipTrigger asChild>
+            <NavLink to={`/course/${course.slug}`} className={linkClasses}>
+              <Notebook className="size-4 shrink-0" />
+              <span className="truncate">{course.title}</span>
+            </NavLink>
+          </TooltipTrigger>
+          <TooltipContent side="top" sideOffset={4}>
+            {course.title}
+          </TooltipContent>
+        </Tooltip>
       ))}
     </nav>
   )

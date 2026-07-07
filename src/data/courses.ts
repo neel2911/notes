@@ -23,6 +23,14 @@ export const courses: Course[] = [
     description:
       'Unix history & philosophy, Linux distros, Bash CLI, file system navigation, streams & pipes, users & permissions, shell scripting, SSH, package management, and cron.',
   },
+  {
+    slug: 'complete-intro-containers',
+    title: 'Complete Intro to Containers, V2',
+    platform: 'Frontend Masters (master.dev)',
+    instructor: 'Brian Holt',
+    description:
+      'Linux container primitives (chroot, namespaces, cgroups), Docker CLI & Dockerfiles, multistage builds, distroless images, bind mounts, volumes, dev containers, Docker Compose, and Kubernetes fundamentals.',
+  },
 ]
 
 export function getCourseBySlug(slug: string): Course | undefined {
